@@ -40,49 +40,54 @@ async function getGoogleSheet(auth) {
 const loginMiddleware = (req , res ,next) =>{
     const {token} = req.cookies
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-        if (err) throw err;
-        next()
+        if (err) {
+            return res.status(401).json({ error: 'Invalid or expired token' });
+        }
+        req.userData = userData;
+        next();
     });
 } 
 
-app.get("/", async (req, res) => {
+app.get("/",loginMiddleware, async (req, res) => {
     // const { request, name } = req.body;
-  
+    const { userData } = req;
     const auth = getAuth()
-
     const googleSheet = await getGoogleSheet(auth);
-
     // get metadata about spreadsheet
     try {
-        const metadata = await googleSheet.spreadsheets.get({
-        spreadsheetId: spreadsheetID, // Pass the spreadsheetId correctly
-        });
-
+        // const metadata = await googleSheet.spreadsheets.get({
+        // spreadsheetId: spreadsheetID, // Pass the spreadsheetId correctly
+        // });
         //   Read rows from spreadsheet
-        const getRows = await googleSheet.spreadsheets.values.get({
+        // const getUsers = await googleSheet.spreadsheets.values.get({
+        //     auth,
+        //     spreadsheetId: spreadsheetID,
+        //     range: `User!A:F`
+        // })
+        const getFinesResponse = await googleSheet.spreadsheets.values.get({
             auth,
             spreadsheetId: spreadsheetID,
-            range: `User!A:A`
+            range: `Trafic_fine!A:H`
         })
-
-        await googleSheet.spreadsheets.values.append({
+        const getPaymentsResponse = await googleSheet.spreadsheets.values.get({
             auth,
-            spreadsheetId: spreadsheetID, 
-            range: "User!A:B",
-            valueInputOption: "USER_ENTERED",
-            resource: {
-                values:[
-                    ["2","noufel@gmail.com"],
-                    ["3","nazih@gmail.com"],
-                    ["4","achraf@gmail.com"],
-                ]
-            }
+            spreadsheetId: spreadsheetID,
+            range: `Payment!A:F`
         })
-        res.send(getRows.data);
+        const user_id = userData.id.data.values[0][0]
+        const fines = getFinesResponse.data.values || [];
+        const payments = getPaymentsResponse.data.values || [];
+        const filteredFines = fines.filter(fine => fine[7] === user_id);
+        const filteredPayments = payments.filter(payment => payment[2] === user_id); 
+        const data = {
+            getFinesResponse:filteredFines,
+            getPaymentsResponse:filteredPayments
+        }
+        res.send(data);
     } catch (error) {
     console.error('The API returned an error:', error);
     res.status(500).send('An error occurred while fetching spreadsheet metadata');
-}
+    }
 })
 
 
@@ -94,7 +99,6 @@ app.post("/register",
     ],
     async (req,res)=>{
         const result = validationResult(res)
-        // console.log(result)
         if(!result.isEmpty()){
             return res.status(400).send({errors:result.array()})
         }
@@ -108,9 +112,9 @@ app.post("/register",
                 spreadsheetId: spreadsheetID,
                 range: "User!A:A",
             });
-            let lastUsedID = getRows.data.values ? getRows.data.values.length : 0;
+            let lastUsedID = getRows.data.values[1] ? getRows.data.values.length : 0;
             // Increment the last used ID to generate a new ID for the next user
-            const newID = lastUsedID + 1;
+            const newID = lastUsedID -1;
             // Unique Email
             const fetchEmail = await googleSheet.spreadsheets.values.get({
                 auth,
@@ -146,7 +150,7 @@ app.post("/login",async(req,res)=>{
         const getRows = await googleSheet.spreadsheets.values.get({
             auth,
             spreadsheetId: spreadsheetID,
-            range: `User!B:B` // Assuming email addresses are in column B
+            range: `User!B:B`
         });
         const emailFound = getRows.data.values.flat().includes(email);
         if (!emailFound) {
@@ -184,40 +188,124 @@ app.post("/login",async(req,res)=>{
     }
 })
 
-app.put("/profile/:id", async (req, res) => {
-    const userId = req.params.id;
+app.put("/profile/:id", loginMiddleware, async (req, res) => {
+    const userId = parseInt(req.params.id); // Convert userId to a number
     const { email, fullname, phone } = req.body;
     try {
-        // Update email, fullname
         const auth = getAuth();
         const googleSheet = await getGoogleSheet(auth);
+
+        // Unique Email
+        const fetchEmail = await googleSheet.spreadsheets.values.get({
+            auth,
+            spreadsheetId: spreadsheetID,
+            range: `User!B:B`
+        });
+        const emailFound = fetchEmail.data.values.flat().includes(email);
+        if (emailFound) {
+            return res.status(422).json('Email must be unique');
+        }
+
+        // Update email, fullname
         await googleSheet.spreadsheets.values.update({
             auth,
             spreadsheetId: spreadsheetID,
-            range: `User!B${userId}:C${userId}`, // Assuming email, fullname, and phone are in columns B, C, and E
+            range: `User!B${userId + 2}:C${userId + 2}`, // Adjusted indices
             valueInputOption: "USER_ENTERED",
             resource: {
                 values: [[email, fullname]],
             },
         });
-         // Update phone
+
+        // Update phone
         await googleSheet.spreadsheets.values.update({
             auth,
             spreadsheetId: spreadsheetID,
-            range: `User!E${userId}`, // Update phone column
+            range: `User!E${userId + 2}`, 
             valueInputOption: "USER_ENTERED",
             resource: {
                 values: [[phone]],
             }
         });
 
-        // Send success response
         res.json({ message: "Profile updated successfully" });
     } catch (error) {
         console.error("Error updating profile:", error);
         res.status(500).json({ error: "Failed to update profile" });
     }
 });
+
+
+app.get('/getOneFine/:id',loginMiddleware,async(req,res)=>{
+    try{
+        const FineID = req.params.id;
+        const auth = getAuth();
+        const googleSheet = await getGoogleSheet(auth);
+        const fetchFine = await googleSheet.spreadsheets.values.get({
+            auth,
+            spreadsheetId: spreadsheetID,
+            range: `Trafic_fine!A:H` 
+        });
+        const fineData = fetchFine.data.values.find((row) => row[0] === (FineID));
+
+        if (!fineData) {
+            return res.status(404).json({ error: 'Fine not found' });
+        }
+        res.json(fineData)
+    }catch(e){
+        res.status(500).json('Internal Server Error')
+    }
+})
+
+app.get('/payTraficFine/:id',loginMiddleware,async(req,res)=>{
+    try{
+        let FineID = req.params.id;
+        const auth = getAuth();
+        const googleSheet = await getGoogleSheet(auth);
+        const fetchFine = await googleSheet.spreadsheets.values.get({
+            auth,
+            spreadsheetId: spreadsheetID,
+            range: `Trafic_fine!A:H` 
+        });
+        const fineData = fetchFine.data.values.find((row) => row[0] === (FineID));
+        if (!fineData) {
+            return res.status(404).json({ error: 'Fine not found' });
+        }
+        FineID = parseInt(FineID)+2
+        const date = new Date()
+        await googleSheet.spreadsheets.values.update({
+            auth,
+            spreadsheetId: spreadsheetID,
+            range: `Trafic_fine!F${FineID}:G${FineID}`,
+            valueInputOption: "USER_ENTERED",
+            resource: {
+                values: [[date, 'TRUE']],
+            },
+        });
+        const getRows = await googleSheet.spreadsheets.values.get({
+            auth,
+            spreadsheetId: spreadsheetID,
+            range: "Payment!A:A",
+        });
+        let lastUsedID = getRows.data.values[1] ? getRows.data.values[parseInt(getRows.data.values.length)-1] : 0;
+        // Increment the last used ID to generate a new ID for the next user
+        const newID = parseInt(lastUsedID) + 1;
+        const payment = await googleSheet.spreadsheets.values.append({
+            auth,
+            spreadsheetId: spreadsheetID, 
+            range: "Payment!A:F",
+            valueInputOption: "USER_ENTERED",
+            resource: {
+                values:[
+                    [newID,FineID-2,fetchFine.data.values[FineID-1][7],"Eccp",fetchFine.data.values[FineID-1][2],date],
+                ]
+            }
+        })
+        res.json(FineID-2)
+    }catch(e){
+        res.status(500).json('Internal Server Error')
+    }
+})
 
 app.post('/logout', (req,res) => {
     res.cookie('token', '').json(true);
