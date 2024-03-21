@@ -10,9 +10,29 @@ import { body, validationResult } from 'express-validator';
 import { ChargilyClient } from '@chargily/chargily-pay';
 
 const client = new ChargilyClient({
-  api_key: 'YOUR_API_KEY_HERE',
+  api_key: 'test_pk_82EjixigeW0z0SJ91luo5PubNBuugPKifQclZamG',
   mode: 'test', // Change to 'live' when deploying your application
 });
+const customerData = {
+    name: 'John Doe',
+    email: 'johnhh@gmail.com',
+    phone: '+213725380137',
+    address: {
+      country: 'DZ',
+      state: 'Algiers',
+      address: '123 Main St',
+    },
+    metadata: {
+      notes: 'Important customer',
+    },
+  };
+  
+  client
+    .createCustomer(customerData)
+    .then((customer) => console.log(customer))
+    .catch((error) => console.error(error));
+
+
 
 dotenv.config();
 const corsOptions = {
