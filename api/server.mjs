@@ -9,35 +9,35 @@ import {google} from 'googleapis'
 import { body, validationResult } from 'express-validator';
 import { ChargilyClient } from '@chargily/chargily-pay';
 
-const client = new ChargilyClient({
-  api_key: 'test_pk_82EjixigeW0z0SJ91luo5PubNBuugPKifQclZamG',
-  mode: 'test', // Change to 'live' when deploying your application
-});
-const customerData = {
-    name: 'John Doe',
-    email: 'johnhh@gmail.com',
-    phone: '+213725380137',
-    address: {
-      country: 'DZ',
-      state: 'Algiers',
-      address: '123 Main St',
-    },
-    metadata: {
-      notes: 'Important customer',
-    },
-  };
+// const client = new ChargilyClient({
+//   api_key: 'test_pk_82EjixigeW0z0SJ91luo5PubNBuugPKifQclZamG',
+//   mode: 'test', // Change to 'live' when deploying your application
+// });
+// const customerData = {
+//     name: 'John Doe',
+//     email: 'johnhh@gmail.com',
+//     phone: '+213725380137',
+//     address: {
+//       country: 'DZ',
+//       state: 'Algiers',
+//       address: '123 Main St',
+//     },
+//     metadata: {
+//       notes: 'Important customer',
+//     },
+//   };
   
-  client
-    .createCustomer(customerData)
-    .then((customer) => console.log(customer))
-    .catch((error) => console.error(error));
+//   client
+//     .createCustomer(customerData)
+//     .then((customer) => console.log(customer))
+//     .catch((error) => console.error(error));
 
 
 
 dotenv.config();
 const corsOptions = {
     credentials: true,
-    origin: 'http://127.0.0.1:5173', 
+    origin: 'http://localhost:3001', 
 };
 const port = 3000;
 app.use(cors(corsOptions))
