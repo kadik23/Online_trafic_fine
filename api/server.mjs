@@ -37,7 +37,7 @@ import { ChargilyClient } from '@chargily/chargily-pay';
 dotenv.config();
 const corsOptions = {
     credentials: true,
-    origin: 'http://localhost:3001', 
+    origin: 'https://online-trafic-fine-4ae7-aosajuip1-kadik23s-projects.vercel.app/', 
 };
 const port = 3000;
 app.use(cors(corsOptions))
@@ -65,6 +65,7 @@ async function getGoogleSheet(auth) {
 
 const loginMiddleware = (req , res ,next) =>{
     const {token} = req.cookies
+    // console.log(token)
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
         if (err) {
             return res.status(401).json({ error: 'Invalid or expired token' });
@@ -81,6 +82,7 @@ app.get("/",loginMiddleware, async (req, res) => {
     const googleSheet = await getGoogleSheet(auth);
     // get metadata about spreadsheet
     try {
+       
         // const metadata = await googleSheet.spreadsheets.get({
         // spreadsheetId: spreadsheetID, // Pass the spreadsheetId correctly
         // });
@@ -100,14 +102,23 @@ app.get("/",loginMiddleware, async (req, res) => {
             spreadsheetId: spreadsheetID,
             range: `Payment!A:F`
         })
+        const getUserResponse = await googleSheet.spreadsheets.values.get({
+            auth,
+            spreadsheetId: spreadsheetID,
+            range: `User!A:F`
+        })
         const user_id = userData.id.data.values[0][0]
         const fines = getFinesResponse.data.values || [];
         const payments = getPaymentsResponse.data.values || [];
+        const user = getUserResponse.data.values || [];
         const filteredFines = fines.filter(fine => fine[7] === user_id);
+        const filteredUser = user.filter(user => user[0] === user_id);
         const filteredPayments = payments.filter(payment => payment[2] === user_id); 
+        const filteredUserWithoutPassword = filteredUser.map(item => [item[0], item[1], item[2], item[4]]);
         const data = {
             getFinesResponse:filteredFines,
-            getPaymentsResponse:filteredPayments
+            getPaymentsResponse:filteredPayments,
+            getUserResponse:filteredUserWithoutPassword
         }
         res.send(data);
     } catch (error) {
@@ -171,6 +182,7 @@ app.post("/register",
 app.post("/login",async(req,res)=>{
     const {email , password} = req.body 
     try{
+
         const auth = getAuth();
         const googleSheet = await getGoogleSheet(auth);
         const getRows = await googleSheet.spreadsheets.values.get({
@@ -204,7 +216,7 @@ app.post("/login",async(req,res)=>{
                 id: userID
             },jwtSecret,{},(err,token)=>{
                 if(err) throw err
-                res.cookie('token',token,{maxAge:3600*60}).json({email,userID:userID.data.values[0][0]})
+                res.cookie('token',token,{maxAge:3600*3600,sameSite:'none',path:'*',secure:true}).json({userID})
             })
         }else{
             res.status(422).json('pass not ok')
@@ -216,21 +228,20 @@ app.post("/login",async(req,res)=>{
 
 app.put("/profile/:id", loginMiddleware, async (req, res) => {
     const userId = parseInt(req.params.id); // Convert userId to a number
-    const { email, fullname, phone } = req.body;
+    const { email, fullname, phone, EDLS } = req.body;
     try {
         const auth = getAuth();
         const googleSheet = await getGoogleSheet(auth);
-
-        // Unique Email
-        const fetchEmail = await googleSheet.spreadsheets.values.get({
-            auth,
-            spreadsheetId: spreadsheetID,
-            range: `User!B:B`
-        });
-        const emailFound = fetchEmail.data.values.flat().includes(email);
-        if (emailFound) {
-            return res.status(422).json('Email must be unique');
-        }
+        // // Unique Email
+        // const fetchEmail = await googleSheet.spreadsheets.values.get({
+        //     auth,
+        //     spreadsheetId: spreadsheetID,
+        //     range: `User!B:B`
+        // });
+        // const emailFound = fetchEmail.data.values.flat().includes(email);
+        // if (emailFound) {
+        //     return res.status(422).json('Email must be unique');
+        // }
 
         // Update email, fullname
         await googleSheet.spreadsheets.values.update({
@@ -243,14 +254,14 @@ app.put("/profile/:id", loginMiddleware, async (req, res) => {
             },
         });
 
-        // Update phone
+        // Update phone + EDLS
         await googleSheet.spreadsheets.values.update({
             auth,
             spreadsheetId: spreadsheetID,
-            range: `User!E${userId + 2}`, 
+            range: `User!E${userId + 2}:F${userId + 2}`, 
             valueInputOption: "USER_ENTERED",
             resource: {
-                values: [[phone]],
+                values: [[phone,EDLS]],
             }
         });
 
@@ -283,9 +294,10 @@ app.get('/getOneFine/:id',loginMiddleware,async(req,res)=>{
     }
 })
 
-app.get('/payTraficFine/:id',loginMiddleware,async(req,res)=>{
+app.post('/payTraficFine/:id',loginMiddleware,async(req,res)=>{
     try{
         let FineID = req.params.id;
+        let {paymentMethod} = req.body;
         const auth = getAuth();
         const googleSheet = await getGoogleSheet(auth);
         const fetchFine = await googleSheet.spreadsheets.values.get({
@@ -323,7 +335,7 @@ app.get('/payTraficFine/:id',loginMiddleware,async(req,res)=>{
             valueInputOption: "USER_ENTERED",
             resource: {
                 values:[
-                    [newID,FineID-2,fetchFine.data.values[FineID-1][7],"Eccp",fetchFine.data.values[FineID-1][2],date],
+                    [newID,FineID-2,fetchFine.data.values[FineID-1][7],paymentMethod,fetchFine.data.values[FineID-1][2],date],
                 ]
             }
         })

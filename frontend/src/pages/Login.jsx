@@ -4,23 +4,31 @@ import { NavLink,Navigate } from 'react-router-dom'
 import {useContext,useState} from 'react'
 import {UserContext} from "../contexts/userContext";
 import axios from "axios";
-
+import UserSessionRepository from '../data/userSession';
+import ToastContext from '../contexts/ToastContext';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [redirect, setRedirect] = useState(false);
-  const {setUser} = useContext(UserContext);
+  const {userID,setUserID} = useContext(UserContext);
+
+  const toastManager = useContext(ToastContext);
+  const alertSuccessHandler = () => { toastManager.alertSuccess("Login successful"); }
+  const alertErroreHandler = () => { toastManager.alertError("Login failed"); }
+  // const alertInfoHandler = () => { toastManager.alertInfo("Info Message"); }
 
   async function handleLoginSubmit(ev) {
       ev.preventDefault();
       try {
-        const {data} = await axios.post('/login', {email,password});
-        setUser(data);
-        alert('Login successful');
+        const data = await axios.post('/login', {email,password});
+        setUserID(data.userID);
+        console.log(userID)
+        console.log(data)
+        alertSuccessHandler()
         setRedirect(true);
       } catch (e) {
-        alert('Login failed');
+        alertErroreHandler()
       }
     }
   
