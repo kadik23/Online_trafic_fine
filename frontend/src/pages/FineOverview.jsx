@@ -8,30 +8,32 @@ import Navbar from '../components/Navbar'
 import axios from 'axios';
 import ToastContext from '../contexts/ToastContext';
 
-
 function FineOverview() {
   const { id } = useParams();
-  const { user, setUser, fines, setFines, payments, setPayments, userID, setUserID } = useContext(UserContext);
+  const { user, setUser, fines, setFines, payments, setPayments, userID, setUserID, oneFine,setOneFine } = useContext(UserContext);
   const [filteredArray, setFilteredArray] = useState();
   const [EDLS, setEDLS] = useState();
   let [isPay,setIsPay] = useState('Unpaid')
   const [redirect, setRedirect] = useState(false);
 
   useEffect(() => {
-    console.log(fines)
     if (fines) { 
-      const idToFilter = id
-      const filteredData = fines.filter(([id]) => id === idToFilter);
-      setFilteredArray(filteredData);
-      console.log( filteredArray);
-      console.log(" data : " + filteredArray[0][6]);
-      const status = filteredArray[0][6]
-      console.log(status);
-      if (status == 'TRUE') {
-        setIsPay('Paid')
-      }
-  }
-  }, [userID, user, id])
+        // console.log(fines)
+        const idToFilter = id
+        const filteredData = fines.filter(([id]) => id === idToFilter);
+        setFilteredArray(filteredData);
+        // console.log( filteredArray);
+        // console.log(" data : " + filteredArray[0][6]);
+        if(filteredArray){
+          const status = filteredArray[0][6]
+          console.log(status);
+          if (status == 'TRUE') {
+            setIsPay('Paid')
+          }
+        }
+        console.log(user)
+    }
+  }, [userID,user,fines])
 
   const toastManager = useContext(ToastContext);
   const alertErroreHandler = () => { toastManager.alertError("Update failed"); }
@@ -60,15 +62,15 @@ function FineOverview() {
         <hr className='bg-black h-0.5 bg-opacity-20  w-[80%]'/> 
         <div className='w-full p-2 flex justify-between'>
           <span>Fine_ID:</span>
-          <span>{filteredArray[0][0]}</span>
+          <span>{filteredArray && filteredArray[0][0]}</span>
         </div>
         <div className='w-full p-2 flex justify-between'>
           <span>Issue_date:</span>
-          <span>{filteredArray[0][3]}</span>
+          <span>{filteredArray && filteredArray[0][3]}</span>
         </div>
         <div className='w-full p-2 flex justify-between'>
           <span>Type:</span>
-          <span>{filteredArray[0][1]}</span>
+          <span>{filteredArray && filteredArray[0][1]}</span>
         </div>
         <div className='w-full p-2 flex justify-between'>
           <span>Location:</span>
@@ -76,29 +78,40 @@ function FineOverview() {
         </div>
         <div className='w-full p-2 flex justify-between'>
           <span>Pay date:</span>
-          {isPay === 'Paid' ? <span>{filteredArray[0][5]}</span> : <span>______</span>}
+          {isPay === 'Paid' ? <span>{filteredArray&& filteredArray[0][5]}</span> : <span>______</span>}
       </div>
         <div className='w-full p-2 flex justify-between'>
           <span>Amount:</span>
-          <span>{filteredArray[0][2]}</span>
+          <span>{filteredArray&& filteredArray[0][2]}</span>
         </div>
         <div className='w-full p-2 flex justify-between'>
           <span>Status:</span>
           <span className={isPay === 'Paid' ? 'text-[#43D100]' : 'text-[#FA0000]'}>{isPay}</span>
         </div>
+        {
+          isPay === 'Paid' &&  (<a href='/' className='underline text-green-600 text-lg'>Download Receipt</a>)
+        }
+
+
       </div>
-      <form onSubmit={handlePaymentForm} className='w-[450px] h-[170px] flex flex-col justify-between mt-16 p-5 items-center font-semibold bg-[#D9D9D9] bg-opacity-75 rounded-2xl cardshadow'>
-        <div className='font-semibold text-xl  boxshadow'>Driving Licence Number:</div>
-        <input 
-            name='fullname'
-            type="text" 
-            className='bg-[#E2E2E2]  w-3/4  px-5 py-1 text-start placeholder:font-semibold rounded-lg outline-none' 
-            value={EDLS}
-            onChange={ev => setEDLS(ev.target.value)}
-            placeholder='Enter Driving Licence Number..'
-        /> 
-        <button type='submit' className='px-32 py-2  text-white bg-[#4FD4B4] rounded-2xl'>Payment mode</button> 
-      </form>
+      {
+        isPay == 'Unpaid' ?
+        <form onSubmit={handlePaymentForm} className='w-[450px] h-[170px] flex flex-col justify-between mt-16 p-5 items-center font-semibold bg-[#D9D9D9] bg-opacity-75 rounded-2xl cardshadow'>
+          <div className='font-semibold text-xl  boxshadow'>Driving Licence Number:</div>
+          <input 
+              name='fullname'
+              type="text" 
+              className='bg-[#E2E2E2]  w-3/4  px-5 py-1 text-start placeholder:font-semibold rounded-lg outline-none' 
+              value={EDLS}
+              onChange={ev => setEDLS(ev.target.value)}
+              placeholder='Enter Driving Licence Number..'
+              required
+          /> 
+          <button type='submit' className='px-32 py-2  text-white bg-[#4FD4B4] rounded-2xl'>Go to payment</button> 
+        </form>
+        : ''
+      }
+  
     </div>
   )
 }

@@ -37,7 +37,7 @@ import { ChargilyClient } from '@chargily/chargily-pay';
 dotenv.config();
 const corsOptions = {
     credentials: true,
-    origin: 'https://online-trafic-fine-4ae7-aosajuip1-kadik23s-projects.vercel.app/', 
+    origin: 'http://localhost:3001', 
 };
 const port = 3000;
 app.use(cors(corsOptions))
@@ -339,14 +339,14 @@ app.post('/payTraficFine/:id',loginMiddleware,async(req,res)=>{
                 ]
             }
         })
-        res.json(FineID-2)
+        res.json(newID)
     }catch(e){
         res.status(500).json('Internal Server Error')
     }
 })
 
 app.post('/logout', (req,res) => {
-    res.cookie('token', '').json(true);
+    res.cookie('token', '',{sameSite:'none',path:'*',secure:true}).json(true);
 });
 
 

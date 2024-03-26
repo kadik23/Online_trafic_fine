@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-const DEFAULT_DURATION = 3000;
 
 export default function usePopup() {
     let MESSAGE_ID = 0;
@@ -9,12 +8,6 @@ export default function usePopup() {
     const alert = (message, type) => {
         let id = MESSAGE_ID;
         setMessages(state => [...state, { id: id, message, type }]);
-        setTimeout(() => {
-            setMessages(state => {
-                let msgs = [...state];
-                return msgs.filter(msg => msg.id != id);
-            });
-        },DEFAULT_DURATION);
         MESSAGE_ID++;
         console.log(messages);
     }

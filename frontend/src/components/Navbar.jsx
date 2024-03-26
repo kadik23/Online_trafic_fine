@@ -12,7 +12,7 @@ function Navbar() {
   }else{className=''}
   return (
     <div className={`w-screen h-16 flex justify-between items-center fixed top-0 left-0 z-20 px-10 ${className} `}>
-        <NavLink to='/home'>
+        <NavLink to='/home' className=' active:scale-105 hover:opacity-90'>
           <img src={Logo} alt="" />       
         </NavLink>
         <NavLinks/>

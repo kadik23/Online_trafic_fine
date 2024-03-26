@@ -8,7 +8,7 @@ function FineCard({data}) {
         isPay = 'Paid'
     }
   return (
-    <NavLink to={`/fine_overview/${data[0]}`} className='bg-[#EEECEC] w-[576px] h-[190px] flex flex-col justify-around p-5 text-[#636262] shadow-lg rounded-xl mb-3 hover:scale-105 transition-all duration-500 cursor-pointer'>
+    <a href={`/fine_overview/${data[0]}`} className='bg-[#EEECEC] w-[576px] h-[190px] flex flex-col justify-around p-5 text-[#636262] shadow-lg rounded-xl mb-3 hover:scale-105 transition-all duration-500 cursor-pointer active:scale-105 '>
         <div className='w-full p-1 flex justify-between'>
             <span>Issue_date:</span>
             <span>{data[3]}</span>
@@ -25,7 +25,7 @@ function FineCard({data}) {
             <span>Status:</span>
             <span className={isPay === 'Paid' ? 'text-[#43D100]' : 'text-[#FA0000]'}>{isPay}</span>
         </div>
-    </NavLink>
+    </a>
   )
 }
 

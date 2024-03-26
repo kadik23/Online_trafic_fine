@@ -8,21 +8,37 @@ export function UserContextProvider({children}) {
   const [userID,setUserID] = useState(null);
   const [fines,setFines] = useState(null);
   const [payments,setPayments] = useState(null);
+  const [oneFine,setOneFine] = useState(null);
   useEffect(() => {
     // if (!user) {
-      axios.get('/').then(({data}) => {
-        setUser(data.getUserResponse);
-        setFines(data.getFinesResponse);
-        setPayments(data.getPaymentsResponse);
-        console.log(user)
-      }).catch(err => {
-        console.log(err)
-      })
-    // }
-  }, []);
+    getData()
+
+
+    }, []);
+
+    async function getData() {
+      try{
+        const {data} = await axios.get('/')
+        if (data ) {
+          setUser(data.getUserResponse);
+          setFines(data.getFinesResponse);
+          setPayments(data.getPaymentsResponse);
+          console.log(user)
+        }
+      }catch(err){
+        if (err.response && err.response.status === 401) {
+          console.log("Unauthorized access. Please log in.");
+        } 
+        else {
+          console.error("An error occurred while fetching data:", err);
+        }      
+      }
+    }
+
+    
 
   return (
-    <UserContext.Provider value={{user,setUser,fines,setFines,payments,setPayments,userID,setUserID}}>
+    <UserContext.Provider value={{user,setUser,fines,setFines,payments,setPayments,userID,setUserID,oneFine,setOneFine}}>
       {children}
     </UserContext.Provider>
   );
