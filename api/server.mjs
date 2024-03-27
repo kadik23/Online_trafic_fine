@@ -38,6 +38,7 @@ dotenv.config();
 const corsOptions = {
     credentials: true,
     origin: 'https://online-trafic-fine-4ae7.vercel.app', 
+    // origin: 'http://localhost:3000', 
 };
 const port = 4000;
 app.use(cors(corsOptions))

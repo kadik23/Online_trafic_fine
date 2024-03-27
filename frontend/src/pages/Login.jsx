@@ -45,21 +45,12 @@ function Login() {
             </NavLink>
         </div>
         <div className='bg-[#D9D9D9] text-[#8F8F8F] absolute top-14 left-52 flex flex-col justify-center h-[28rem] w-[26rem] rounded-2xl bg-opacity-80 shadow-2xl'>
-            <div className='flex flex-col justify-center items-center text'>
+            <div className='flex flex-col justify-center items-center text-[#8F8F8F]'>
                 <span className='font-bold text-2xl boxshadow mb-3 '> Welcome back</span>
                 <span className='font-semibold text-lg'>Please enter your details below to sign in</span>
             </div>
             <form onSubmit={handleLoginSubmit} className='flex flex-col items-center justify-between w-full h-[55%] mt-10'>
                 <hr className='bg-black h-0.5 bg-opacity-20  w-[80%]'/> 
-                {/* <div className='w-[80%] relative'>   
-                  <input 
-                    type="text" 
-                    className='bg-[#E2E2E2]  w-full px-10 py-2 text-start placeholder:font-semibold rounded-lg outline-none' 
-                    placeholder='Email address'
-                  />  
-                  <span className='text-red-700 absolute right-[55%] top-2'>*</span>
-                </div>   */}
-
                 <div className="inputbox">
                     <input
                       required="required" 
@@ -81,15 +72,6 @@ function Login() {
                     <span>Password *</span>
                     <i></i>
                 </div>
-                {/* <div className='w-[80%] relative'>
-                  <input 
-                    type="password" 
-                    className='bg-[#E2E2E2]  w-full px-10 py-2 text-start placeholder:font-semibold rounded-lg outline-none' 
-                    placeholder='Password'
-                    
-                  />
-                  <span className='text-red-700 absolute right-[65%] top-2'>*</span>
-                </div>   */}
                 <button type='submit' className='px-24 py-2 text-white bg-[#4FD4B4] rounded-2xl hover:opacity-80 active:scale-105'>Log in</button> 
                 <div className='flex items-center justify-center w-full'>
                     <hr className='bg-black h-0.5 bg-opacity-60  w-[25%]'/>

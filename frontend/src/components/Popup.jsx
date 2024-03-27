@@ -81,7 +81,7 @@ function Success(){
 function Failed(){
     return(
         <div className=''>
-            <h1 className='text-[#434343] font-semibold absolute top-2'>Confirm payment</h1>
+            <h1 className='text-[#434343] font-semibold absolute top-2 ml-14'>Confirm payment</h1>
             <img src={FailedIcon} alt="" />
             <h1 className='font-bold p-2 text-xl text-[#828282]'>Payment failed!</h1>
             <p className='text-[#828282] font-medium'>Pleasw try again </p>

@@ -8,6 +8,7 @@ import Navbar from '../components/Navbar'
 import axios from 'axios';
 import ToastContext from '../contexts/ToastContext';
 import Loading from '../components/Loading';
+
 function FineOverview() {
   const { id } = useParams();
   const { user,  fines, userID,  ready } = useContext(UserContext);
@@ -23,6 +24,8 @@ function FineOverview() {
         const idToFilter = id
         const filteredData = fines.filter(([id]) => id === idToFilter);
         setFilteredArray(filteredData);
+        // console.log( filteredArray);
+        // console.log(" data : " + filteredArray[0][6]);
         if(filteredArray){
           const status = filteredArray[0][6]
           console.log(status);
@@ -41,7 +44,7 @@ function FineOverview() {
   if (ready && !user && !redirect) {
     return <Navigate to={'/sign_in'} />
   }
-
+  
   const handlePaymentForm = async (ev) => {
     ev.preventDefault();
     try {

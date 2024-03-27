@@ -33,15 +33,14 @@ function LandingPage() {
               Here we provide you with quick  <br /> and convenient payment for 
               <br /> illegal violations
           </motion.h2>
+          <motion.button
+            variants={textVariants}
+            type='submit'
+            className='px-5 py-2 mt-5 ml-5 text-white bg-[#4FD4B4] rounded-2xl hover:opacity-80 active:scale-105'
+          >  
+          Start Payment
+          </motion.button>
       </motion.div>
-        {/* <h1 className='font-bold text-4xl text-white boxshadow mt-40 mb-5'>
-            Welcome to 
-            <span className='text-black'>Ticket</span>
-            <span className=' text-red-700'>Pay</span> 
-            <br /><span className='ml-3 mt-2'>website</span> 
-        </h1>    */}
-        {/* <h2 className='text-white text-lg font-semibold ml-6'>
-        </h2> */}
     </div>
   );
   
