@@ -4,7 +4,6 @@ import { NavLink,Navigate } from 'react-router-dom'
 import {useContext,useState} from 'react'
 import {UserContext} from "../contexts/userContext";
 import axios from "axios";
-import UserSessionRepository from '../data/userSession';
 import ToastContext from '../contexts/ToastContext';
 import Logo from '../assets/images/Logo.png'
 
@@ -18,7 +17,6 @@ function Login() {
   const toastManager = useContext(ToastContext);
   const alertSuccessHandler = () => { toastManager.alertSuccess("Login successful"); }
   const alertErroreHandler = () => { toastManager.alertError("Login failed"); }
-  // const alertInfoHandler = () => { toastManager.alertInfo("Info Message"); }
 
   async function handleLoginSubmit(ev) {
       ev.preventDefault();

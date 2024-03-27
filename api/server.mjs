@@ -37,9 +37,9 @@ import { ChargilyClient } from '@chargily/chargily-pay';
 dotenv.config();
 const corsOptions = {
     credentials: true,
-    origin: 'http://localhost:3001', 
+    origin: 'http://localhost:3000', 
 };
-const port = 3000;
+const port = 4000;
 app.use(cors(corsOptions))
 app.use(express.json())
 app.use(cookieParser());
@@ -114,7 +114,7 @@ app.get("/",loginMiddleware, async (req, res) => {
         const filteredFines = fines.filter(fine => fine[7] === user_id);
         const filteredUser = user.filter(user => user[0] === user_id);
         const filteredPayments = payments.filter(payment => payment[2] === user_id); 
-        const filteredUserWithoutPassword = filteredUser.map(item => [item[0], item[1], item[2], item[4]]);
+        const filteredUserWithoutPassword = filteredUser.map(item => [item[0], item[1], item[2], item[4], item[5]]);
         const data = {
             getFinesResponse:filteredFines,
             getPaymentsResponse:filteredPayments,

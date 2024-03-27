@@ -1,6 +1,6 @@
 import React from 'react';
-import { NavLink, Navigate } from 'react-router-dom';
-import { useState, useContext, useEffect } from "react";
+import { NavLink } from 'react-router-dom';
+import { useState, useContext, } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import {

@@ -5,19 +5,33 @@ import Navbar from '../components/Navbar';
 import FineCard from '../components/FineCard';
 import axios from 'axios';
 import ToastContext from '../contexts/ToastContext';
+import {Navigate} from "react-router-dom";
+
 
 function Home() {
 
-  const { user, setUser, fines, setFines, payments, setPayments, userID, setUserID } = useContext(UserContext);
+  const { user, fines, userID, ready} = useContext(UserContext);
+  const toastManager = useContext(ToastContext);
   const [email, setEmail] = useState('');
   const [fullname, setFullname] = useState('');
   const [phone, setPhone] = useState('');
   const [numL, setNumL] = useState('');
   const [redirect, setRedirect] = useState(false);
-
-  const toastManager = useContext(ToastContext);
   const alertSuccessHandler = () => { toastManager.alertSuccess("Login successful"); }
   const alertErroreHandler = () => { toastManager.alertError("Login failed"); }
+  
+  useEffect(() => {
+    console.log(user);
+    if(user){
+      const data = user[0]
+      console.log(data)
+      setEmail(data[1])
+      setPhone(data[3])
+      setFullname(data[2])
+      setNumL(data[4])
+      console.log(fines)
+    }
+  },[userID,user,fines]);
 
   const updateProfile =async (ev)=>{
     ev.preventDefault();
@@ -31,17 +45,14 @@ function Home() {
     }
   }
 
-  useEffect(() => {
-    console.log(user);
-    if(user){
-      const data = user[0]
-      console.log(data)
-      setEmail(data[1])
-      setPhone(data[3])
-      setFullname(data[2])
-        console.log(fines)
-      }
-  },[userID,user,fines]);
+
+  if (!ready) {
+    return 'Loading...';
+  }
+
+  if (ready && !user && !redirect) {
+    return <Navigate to={'/sign_in'} />
+  }
   return (
     <div className='w-screen min-h-screen    flex flex-wrap gap-20  bg-gradient-to-b  from-[#BEB1A6] from-30% to-[#D4CABB] to-60%'>
       <Navbar/>

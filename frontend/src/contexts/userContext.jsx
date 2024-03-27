@@ -9,6 +9,8 @@ export function UserContextProvider({children}) {
   const [fines,setFines] = useState(null);
   const [payments,setPayments] = useState(null);
   const [oneFine,setOneFine] = useState(null);
+  const [ready,setReady] = useState(false);
+
   useEffect(() => {
     // if (!user) {
     getData()
@@ -23,6 +25,7 @@ export function UserContextProvider({children}) {
           setUser(data.getUserResponse);
           setFines(data.getFinesResponse);
           setPayments(data.getPaymentsResponse);
+          setReady(true);
           console.log(user)
         }
       }catch(err){
@@ -38,7 +41,7 @@ export function UserContextProvider({children}) {
     
 
   return (
-    <UserContext.Provider value={{user,setUser,fines,setFines,payments,setPayments,userID,setUserID,oneFine,setOneFine}}>
+    <UserContext.Provider value={{user,setUser,fines,setFines,payments,setPayments,userID,setUserID,oneFine,setOneFine,ready}}>
       {children}
     </UserContext.Provider>
   );

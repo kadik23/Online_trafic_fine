@@ -3,7 +3,6 @@ import RegisterImage  from "../assets/images/Register.png"
 import { NavLink, Navigate } from 'react-router-dom'
 import axios from "axios";
 import ToastContext from '../contexts/ToastContext';
-import {UserContext} from "../contexts/userContext";
 import Logo from '../assets/images/Logo.png'
 
 function Register() {
@@ -27,8 +26,6 @@ function Register() {
             });
             alertSuccessHandler();
             setRedirect(true)
-            // setTimeout(() => {
-            // }, 3000);
         } catch (e) {
             alertErroreHandler('Registration failed. Please try again later');
         }
@@ -96,18 +93,12 @@ function Register() {
                         <i></i>
                     </div>
                 </div>
-
             </div>
             <NavLink to='/sign_in'n className='px-2 mt-2 ml-16 hover:opacity-60'>already have an account?</NavLink>
             <div className='flex justify-center w-[100%] items-center my-5 '>
                 <button type="submit" className='px-16 mt-10 py-2 text-white bg-[#6C675E] rounded-2xl hover:opacity-90 active:scale-105'>Register</button> 
             </div>
             <div className="flex flex-col justify-between items-center">
-                {/* <div className='flex items-center justify-center w-full'>
-                    <hr className='bg-black h-0.5 bg-opacity-60  w-[15%]'/>
-                    <hr className='bg-black h-0.5 bg-opacity-60  w-[15%]'/>
-                </div> */}
-                {/* <NavLink to='/sign_in' className="underline ">Login</NavLink> */}
             </div>
         </form>
         </div>  

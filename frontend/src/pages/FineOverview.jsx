@@ -10,20 +10,19 @@ import ToastContext from '../contexts/ToastContext';
 
 function FineOverview() {
   const { id } = useParams();
-  const { user, setUser, fines, setFines, payments, setPayments, userID, setUserID, oneFine,setOneFine } = useContext(UserContext);
+  const { user,  fines, userID,  ready } = useContext(UserContext);
   const [filteredArray, setFilteredArray] = useState();
   const [EDLS, setEDLS] = useState();
   let [isPay,setIsPay] = useState('Unpaid')
   const [redirect, setRedirect] = useState(false);
+  const toastManager = useContext(ToastContext);
+  const alertErroreHandler = () => { toastManager.alertError("Update failed"); }
 
   useEffect(() => {
     if (fines) { 
-        // console.log(fines)
         const idToFilter = id
         const filteredData = fines.filter(([id]) => id === idToFilter);
         setFilteredArray(filteredData);
-        // console.log( filteredArray);
-        // console.log(" data : " + filteredArray[0][6]);
         if(filteredArray){
           const status = filteredArray[0][6]
           console.log(status);
@@ -35,9 +34,14 @@ function FineOverview() {
     }
   }, [userID,user,fines])
 
-  const toastManager = useContext(ToastContext);
-  const alertErroreHandler = () => { toastManager.alertError("Update failed"); }
-  
+  if (!ready) {
+    return 'Loading...';
+  }
+
+  if (ready && !user && !redirect) {
+    return <Navigate to={'/sign_in'} />
+  }
+
   const handlePaymentForm = async (ev) => {
     ev.preventDefault();
     try {

@@ -9,10 +9,10 @@ import PopupContext from '../contexts/PopupContext'
 // import usePopup from '../hooks/usePopup'
 import axios from 'axios';
 import {UserContext} from "../contexts/userContext";
-import { useParams } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
 
 function PaymentGiteway() {
-  const { user, setUser, fines, setFines, payments, setPayments, userID, setUserID, oneFine,setOneFine } = useContext(UserContext);
+  const { user, oneFine,setOneFine, ready } = useContext(UserContext);
   const [cardNumber,setCardNumber] = useState()
   const [cardHolder,setCardHolder] = useState()
   const [cartdName,setCardName] = useState()
@@ -20,6 +20,7 @@ function PaymentGiteway() {
   const [expiryDate,setExpiryDate] = useState()
   const [getOneFine,setGetOneFine] = useState()
   const popupManager = useContext(PopupContext);
+  const [redirect, setRedirect] = useState(false);
   const alertSuccessHandler = () => { popupManager.alertSuccess("Success Message"); }
   const alertErroreHandler = () => { popupManager.alertError("Error Message"); }
   const { id } = useParams();  
@@ -33,7 +34,6 @@ function PaymentGiteway() {
         alertSuccessHandler("Success Message")
         console.log(oneFine)
       }
-      // setRedirect(true);
     }catch(e){
       alertErroreHandler("Failed to update profile")
       console.error(e); 
@@ -57,9 +57,7 @@ function PaymentGiteway() {
         const data = await getOneFineRequest();
         setGetOneFine(data);
         console.log("one fine:", data);
-  
-        // Update oneFine state once getOneFine is available
-        setOneFine({
+          setOneFine({
           fineID: id,
           amount: data?.amount, // Access the properties of data directly
           issueDate: data?.issueDate,
@@ -70,18 +68,21 @@ function PaymentGiteway() {
         console.error("Error setting state:", error);
       }
     };
-  
     fetchData();
-  }, [id]); // Add id to dependency array to fetch data whenever id changes
+  }, [id]); 
   
   
-  
+  if (!ready) {
+    return 'Loading...';
+  }
+
+  if (ready && !user && !redirect) {
+    return <Navigate to={'/sign_in'} />
+  }
 
   return (
     <div className='h-screen w-screen px-10 flex items-center' style={{backgroundImage:`url(${PaymentImage })`,backgroundSize: '100% 100%',backgroundRepeat:"no-repeat", backgroundPosition:"center"}}>
     <Navbar/>
-    <button className='m-2 cursor-pointer' onClick={alertErroreHandler}>Err</button>
-    <button className='m-2 cursor-pointer' onClick={alertSuccessHandler}>Succ</button>
     <form onSubmit={handlePaymentFormSubmit} className='w-[650px] h-[450px] flex flex-col justify-between mt-16 p-10 items-center font-semibold bg-[#D9D9D9] bg-opacity-75 rounded-2xl cardshadow'>
         <div className='font-bold p-2 text-3xl text-[#A1A09F] boxshadow flex items-center '>
           <CreditCard />
