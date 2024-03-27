@@ -12,11 +12,8 @@ export function UserContextProvider({children}) {
   const [ready,setReady] = useState(false);
 
   useEffect(() => {
-    // if (!user) {
     getData()
-
-
-    }, []);
+  }, []);
 
     async function getData() {
       try{

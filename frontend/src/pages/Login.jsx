@@ -72,7 +72,7 @@ function Login() {
                     <span>Password *</span>
                     <i></i>
                 </div>
-                <button type='submit' className='px-24 py-2 text-white bg-[#4FD4B4] rounded-2xl hover:opacity-80 active:scale-105'>Log in</button> 
+                <button type='submit' className='px-24 py-2 text-white bg-[#4FD4B4] font-semibold rounded-2xl hover:opacity-80 active:scale-105'>Login</button> 
                 <div className='flex items-center justify-center w-full'>
                     <hr className='bg-black h-0.5 bg-opacity-60  w-[25%]'/>
                     <span className='px-2'>Not a member?</span>

@@ -41,7 +41,7 @@ function FineOverview() {
     return <Loading/>;
   }
 
-  if (ready && !user && !redirect) {
+  if (ready && !user && !redirect ) {
     return <Navigate to={'/sign_in'} />
   }
   

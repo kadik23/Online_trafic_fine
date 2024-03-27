@@ -18,7 +18,9 @@ function PaymentGiteway() {
   const [cardHolder,setCardHolder] = useState()
   const [cartdName,setCardName] = useState()
   const [CVV,setCCV] = useState()
-  const [expiryDate,setExpiryDate] = useState()
+  // const [expiryDate,setExpiryDate] = useState()
+  const [expiryYear,setExpiryYear] = useState()
+  const [expiryMonth,setExpiryMonth] = useState()
   const [getOneFine,setGetOneFine] = useState()
   const popupManager = useContext(PopupContext);
   const [redirect, setRedirect] = useState(false);
@@ -131,7 +133,7 @@ function PaymentGiteway() {
             />
             <span className='text-red-700 absolute right-[30%] top-4'>*</span>
           </div> 
-          <div className='w-[33%] p-2 relative'>
+          {/* <div className='w-[33%] p-2 relative'>
             <input 
               type="date" 
               className='bg-[#E2E2E2]  w-full px-10 py-2 text-start placeholder:font-semibold rounded-lg outline-none' 
@@ -141,15 +143,37 @@ function PaymentGiteway() {
               onChange={ev => setCCV(ev.target.value)}
             />
             <span className='text-red-700 absolute right-[23%] top-4'>*</span>
-          </div> 
+          </div>  */}
+          <div className='flex p-2 relative'>
+            <input 
+              type="number" 
+              className='bg-[#E2E2E2] w-1/2 px-9 py-1 text-start placeholder:font-semibold rounded-l-lg outline-none' 
+              placeholder='Month (MM)'
+              value={expiryMonth}
+              min="1"
+              max="12"
+              required
+              onChange={ev => setExpiryMonth(ev.target.value)}
+            />
+            <input 
+              type="number" 
+              className='bg-[#E2E2E2] w-1/2 px-11 py-1 text-start placeholder:font-semibold rounded-r-lg outline-none' 
+              placeholder='Year (YYYY)'
+              value={expiryYear}
+              min={new Date().getFullYear()}
+              required
+              onChange={ev => setExpiryYear(ev.target.value)}
+            />
+          </div>
+
           <div className='w-[30%] p-2 relative'>
             <input 
               type="text" 
               className='bg-[#E2E2E2]  w-full px-10 py-2 text-start placeholder:font-semibold rounded-lg outline-none' 
               placeholder='cvv'
-              value={expiryDate}
+              value={CVV}
               required
-              onChange={ev => setExpiryDate(ev.target.value)}
+              onChange={ev => setCCV(ev.target.value)}
             />
             <span className='text-red-700 absolute right-[50%] top-4'>*</span>
           </div> 

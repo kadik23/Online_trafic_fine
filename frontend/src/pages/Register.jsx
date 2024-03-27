@@ -96,7 +96,7 @@ function Register() {
             </div>
             <NavLink to='/sign_in'n className='px-2 mt-2 ml-16 hover:opacity-60'>already have an account?</NavLink>
             <div className='flex justify-center w-[100%] items-center my-5 '>
-                <button type="submit" className='px-16 mt-10 py-2 text-white bg-[#6C675E] rounded-2xl hover:opacity-90 active:scale-105'>Register</button> 
+                <button type="submit" className='px-16 mt-10 py-2 text-white bg-[#4FD4B4] font-semibold rounded-2xl hover:opacity-90 active:scale-105'>Register</button> 
             </div>
             <div className="flex flex-col justify-between items-center">
             </div>
