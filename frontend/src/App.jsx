@@ -15,7 +15,7 @@ import Popup from './components/Popup'
 import PopupContext from './contexts/PopupContext'
 import usePopup from './hooks/usePopup'
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = 'http://127.0.0.1:4000';
+axios.defaults.baseURL = 'https://online-trafic-fine-7.onrender.com/';
 
 function App() {
   const toastManager = useToast();
