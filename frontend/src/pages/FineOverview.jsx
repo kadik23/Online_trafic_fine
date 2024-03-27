@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 import Navbar from '../components/Navbar'
 import axios from 'axios';
 import ToastContext from '../contexts/ToastContext';
-
+import Loading from '../components/Loading';
 function FineOverview() {
   const { id } = useParams();
   const { user,  fines, userID,  ready } = useContext(UserContext);
@@ -35,7 +35,7 @@ function FineOverview() {
   }, [userID,user,fines])
 
   if (!ready) {
-    return 'Loading...';
+    return <Loading/>;
   }
 
   if (ready && !user && !redirect) {

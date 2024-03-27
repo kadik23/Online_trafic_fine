@@ -10,6 +10,7 @@ import PopupContext from '../contexts/PopupContext'
 import axios from 'axios';
 import {UserContext} from "../contexts/userContext";
 import { useParams, Navigate } from 'react-router-dom';
+import Loading from '../components/Loading'
 
 function PaymentGiteway() {
   const { user, oneFine,setOneFine, ready } = useContext(UserContext);
@@ -73,7 +74,7 @@ function PaymentGiteway() {
   
   
   if (!ready) {
-    return 'Loading...';
+    return <Loading/>;
   }
 
   if (ready && !user && !redirect) {

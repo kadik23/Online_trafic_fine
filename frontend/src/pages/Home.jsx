@@ -6,6 +6,7 @@ import FineCard from '../components/FineCard';
 import axios from 'axios';
 import ToastContext from '../contexts/ToastContext';
 import {Navigate} from "react-router-dom";
+import Loading from '../components/Loading';
 
 
 function Home() {
@@ -47,7 +48,7 @@ function Home() {
 
 
   if (!ready) {
-    return 'Loading...';
+    return <Loading/>;
   }
 
   if (ready && !user && !redirect) {
