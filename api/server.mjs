@@ -37,7 +37,7 @@ import { ChargilyClient } from '@chargily/chargily-pay';
 dotenv.config();
 const corsOptions = {
     credentials: true,
-    origin: 'https://online-trafic-fine-4ae7.vercel.app/', 
+    origin: 'https://online-trafic-fine-4ae7.vercel.app', 
 };
 const port = 4000;
 app.use(cors(corsOptions))
