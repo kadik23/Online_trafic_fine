@@ -26,8 +26,8 @@ function FineOverview() {
         setFilteredArray(filteredData);
         // console.log( filteredArray);
         // console.log(" data : " + filteredArray[0][6]);
-        if(filteredArray){
-          const status = filteredArray[0][6]
+        if(filteredData){
+          const status = filteredData[0][6]
           console.log(status);
           if (status == 'TRUE') {
             setIsPay('Paid')
